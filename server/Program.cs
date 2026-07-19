@@ -13,7 +13,7 @@ app.MapGet("/api/test", () =>
 {
     return Results.Ok(new
     {
-        message = "Hello World!"
+        Message = "Hello World!"
     });
 });
 
