@@ -4,7 +4,13 @@ import './App.css'
 function App() {
 const [message, setMessage] = useState('');
 
-async function fetchMessage() {
+async function fetchMessage(event) {
+  event.preventDefault();
+
+  const state = document.getElementById('state').value.trim().toUpperCase();
+  const city = document.getElementById('city').value.trim();
+  const zip = document.getElementById('zip').value.trim();
+
   try {
     const response = await fetch('/api/test');
     const data = await response.json();
@@ -14,12 +20,10 @@ async function fetchMessage() {
   }
 }
 
-async function clearResults() {
+function clearResults() {
   const stateInput = document.getElementById('state');
   const cityInput = document.getElementById('city');
   const zipInput = document.getElementById('zip');
-  const resultsDiv = document.querySelector('.results');
-  const noDataMessage = document.getElementById('noData');
   stateInput.value = '';
   cityInput.value = '';
   zipInput.value = '';
@@ -29,30 +33,55 @@ async function clearResults() {
   return (
     <>
     <center>
-    <h1 class="title">AMI Assessment</h1>
+    <h1 className="title">AMI Assessment</h1>
     <p id="subtitle">Enter a location to get current and historical weather data.</p>
 
+    <form onSubmit={fetchMessage}>
     <label>City</label>
-    <input type="text" id="city" name="city" placeholder="Enter city name" />
+    <input 
+      type="text"
+      id="city"
+      name="city"
+      required
+      pattern="[A-Za-z ]+"
+      placeholder="Enter a city name"
+    />
     <br />
-    <label>State</label>
-    <input type="text" id="state" name="state" placeholder="Enter state name" />
+    <label>State Code</label>
+    <input 
+      type="text" 
+      id="state" 
+      name="state" 
+      maxLength="2"
+      required
+      pattern="[A-Za-z]{2}"
+      placeholder="Enter a 2-letter state code" 
+    />
     <br />
     <label>ZIP Code</label>
-    <input type="text" id="zip" name="zip" placeholder="Enter ZIP code" />
+    <input 
+      type="text" 
+      id="zip" 
+      name="zip" 
+      maxLength="5"
+      required
+      pattern="[0-9]{5}"
+      placeholder="Enter a 5-digit ZIP code" 
+    />
     <br />
 
     <div>
-    <button onClick={fetchMessage}>Submit</button>
+    <button type="submit">Submit</button>
     
-    <button id="clearButton" onClick={clearResults}>
+    <button type="button" id="clearButton" onClick={clearResults}>
       Clear
     </button>
     </div>
+    </form>
 
-    <h2 id="resultsTitle" class="title">Results</h2>
+    <h2 id="resultsTitle" className="title">Results</h2>
 
-    <div class="results">
+    <div className="results">
       <h3 id="noData">No data yet.</h3>
        <p>{message}</p>
       <p>Weather data will be displayed here after you submit a location.</p>
