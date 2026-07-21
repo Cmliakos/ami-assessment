@@ -12,9 +12,15 @@ async function fetchMessage(event) {
   const zip = document.getElementById('zip').value.trim();
 
   try {
-    const response = await fetch('/api/test');
+    const response = await fetch('/api/weather', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ city, state, zip })
+    });
     const data = await response.json();
-    setMessage(data.message);
+    setMessage(`City: ${data.city}, State: ${data.state}, ZIP: ${data.zip}`);
   } catch (error) {
     console.error('Error fetching message:', error);
   }

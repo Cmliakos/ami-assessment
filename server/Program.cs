@@ -1,3 +1,5 @@
+using server.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
@@ -9,11 +11,13 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-app.MapGet("/api/test", () =>
+app.MapPost("/api/weather", (WeatherRequest request) =>
 {
     return Results.Ok(new
     {
-        Message = "Hello World!"
+        city = request.City,
+        state = request.State,
+        zip = request.Zip
     });
 });
 
