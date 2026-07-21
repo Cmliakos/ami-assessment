@@ -2,7 +2,8 @@ import { useState } from 'react';
 import './App.css'
 
 function App() {
-const [message, setMessage] = useState('');
+const [weather, setWeather] = useState(null);
+const [error, setError] = useState('');
 
 async function fetchMessage(event) {
   event.preventDefault();
@@ -12,6 +13,7 @@ async function fetchMessage(event) {
   const zip = document.getElementById('zip').value.trim();
 
   try {
+    setError('');
     const response = await fetch('/api/weather', {
       method: 'POST',
       headers: {
@@ -19,10 +21,20 @@ async function fetchMessage(event) {
       },
       body: JSON.stringify({ city, state, zip })
     });
+    if (!response.ok) {
+      throw new Error(`Unable to retrieve weather data.`);
+    }
     const data = await response.json();
-    setMessage(`City: ${data.city}, State: ${data.state}, ZIP: ${data.zip}, Token: ${data.token}`);
+    if (!data[0]) {
+      throw new Error('No weather data was returned');
+    }
+
+    const returnedWeather = data[0];
+    setWeather(returnedWeather);
   } catch (error) {
-    console.error('Error fetching message:', error);
+    console.error('Error fetching weather data:', error);
+    setWeather(null);
+    setError(error.message);
   }
 }
 
@@ -33,7 +45,8 @@ function clearResults() {
   stateInput.value = '';
   cityInput.value = '';
   zipInput.value = '';
-  setMessage('');
+  setWeather(null);
+  setError(null);
 }
 
   return (
@@ -88,9 +101,26 @@ function clearResults() {
     <h2 id="resultsTitle" className="title">Results</h2>
 
     <div className="results">
+
+      {weather ? (
+        <>
+        <h3>{weather.city}, {weather.state}, {weather.zip}</h3>
+
+        <p>Temperature: {weather.temperature}°F</p>
+
+        <p>Cloud Coverage: {Math.round(weather.cloudCoverage * 100)}%</p>
+
+        <p>Wind: {weather.windSpeed} mph at {weather.windDirection}°</p>
+
+        </>
+      ) : error ? (
+        <p className="error">Error: {error}</p>
+      ) : (
+        <>
       <h3 id="noData">No data yet.</h3>
-       <p>{message}</p>
       <p>Weather data will be displayed here after you submit a location.</p>
+      </>
+      )}
     </div>
     </center>
     </>
