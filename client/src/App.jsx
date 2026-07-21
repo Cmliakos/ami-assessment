@@ -25,11 +25,13 @@ async function fetchMessage(event) {
       throw new Error(`Unable to retrieve weather data.`);
     }
     const data = await response.json();
-    if (!data[0]) {
+    if (!data.current || !data.current[0]) {
       throw new Error('No weather data was returned');
     }
 
-    const returnedWeather = data[0];
+    const returnedWeather = data.current[0];
+    returnedWeather.averageHigh = data.averageHigh;
+
     setWeather(returnedWeather);
   } catch (error) {
     console.error('Error fetching weather data:', error);
@@ -46,7 +48,7 @@ function clearResults() {
   cityInput.value = '';
   zipInput.value = '';
   setWeather(null);
-  setError(null);
+  setError('');
 }
 
   return (
@@ -111,6 +113,8 @@ function clearResults() {
         <p>Cloud Coverage: {Math.round(weather.cloudCoverage * 100)}%</p>
 
         <p>Wind: {weather.windSpeed} mph at {weather.windDirection}°</p>
+
+        <p>12-Month Average High: {weather.averageHigh}°F</p>
 
         </>
       ) : error ? (

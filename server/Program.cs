@@ -54,8 +54,42 @@ app.MapPost("/api/weather", async (
 
         var weatherData = await apiResponse.Content.ReadFromJsonAsync<object>();
 
-        return Results.Ok(weatherData);
-}
+        if (weatherData == null)
+        {
+            return Results.Problem("Operation failed: weather data was not returned.");
+        }
+
+        var historicalResponse = await httpClient.PostAsJsonAsync(
+            "https://ami-interviewassessment.azurewebsites.net/WeatherData/ByLocation/HighestTemps",
+            apiRequest
+        );
+
+        historicalResponse.EnsureSuccessStatusCode();
+
+        var historicalData = await historicalResponse.Content.ReadFromJsonAsync<List<HighestTemperature>>();
+        
+        if (historicalData == null || historicalData.Count == 0 || historicalData[0].Rolling12MonthTemps == null || historicalData[0].Rolling12MonthTemps.Count == 0)
+        {
+            return Results.Problem("Operation failed: historical weather data was not returned.");
+        }
+
+        var monthlyTemperatures = historicalData[0].Rolling12MonthTemps;
+
+        double totalTemperature = 0;
+        for (int i = 0; i < monthlyTemperatures.Count; i++)
+        {
+            totalTemperature += monthlyTemperatures[i];
+        }
+
+        double averageTemperature = totalTemperature / monthlyTemperatures.Count;
+        var averageHigh = Math.Round(averageTemperature, 1);
+
+        return Results.Ok(new
+        {
+            current = weatherData,
+            averageHigh
+        });
+    }
     catch (Exception ex)
     {
         var message = ex.Message.StartsWith("Operation failed:")
