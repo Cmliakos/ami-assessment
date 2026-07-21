@@ -20,7 +20,7 @@ async function fetchMessage(event) {
       body: JSON.stringify({ city, state, zip })
     });
     const data = await response.json();
-    setMessage(`City: ${data.city}, State: ${data.state}, ZIP: ${data.zip}`);
+    setMessage(`City: ${data.city}, State: ${data.state}, ZIP: ${data.zip}, Token: ${data.token}`);
   } catch (error) {
     console.error('Error fetching message:', error);
   }
