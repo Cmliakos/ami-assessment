@@ -1,6 +1,6 @@
 namespace server.Models;
 
-public record WeatherRequest (
+public record WeatherRequest(
     string City,
     string State,
     string Zip

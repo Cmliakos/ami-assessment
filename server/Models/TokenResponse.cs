@@ -1,5 +1,5 @@
 namespace server.Models;
 
-public record TokenResponse (
+public record TokenResponse(
     string AccessToken
 );

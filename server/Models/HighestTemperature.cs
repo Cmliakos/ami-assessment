@@ -1,6 +1,6 @@
 namespace server.Models;
 
-public record HighestTemperature (
+public record HighestTemperature(
     List<double> Rolling12MonthTemps,
     string City,
     string State,

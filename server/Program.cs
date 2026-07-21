@@ -31,10 +31,10 @@ app.MapPost("/api/weather", async (
         httpClient.DefaultRequestHeaders.Authorization =
             new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", tokenResponse.AccessToken);
 
-            var apiRequest = new
+        var apiRequest = new
+        {
+            locations = new[]
             {
-                locations = new[]
-                {
                     new
                     {
                         city = request.City,
@@ -42,8 +42,8 @@ app.MapPost("/api/weather", async (
                         zip = request.Zip
                     }
                 },
-                unitOfMeasurement = "F"
-            };
+            unitOfMeasurement = "F"
+        };
 
         var apiResponse = await httpClient.PostAsJsonAsync(
             "https://ami-interviewassessment.azurewebsites.net/WeatherData/ByLocation",
@@ -67,7 +67,7 @@ app.MapPost("/api/weather", async (
         historicalResponse.EnsureSuccessStatusCode();
 
         var historicalData = await historicalResponse.Content.ReadFromJsonAsync<List<HighestTemperature>>();
-        
+
         if (historicalData == null || historicalData.Count == 0 || historicalData[0].Rolling12MonthTemps == null || historicalData[0].Rolling12MonthTemps.Count == 0)
         {
             return Results.Problem("Operation failed: historical weather data was not returned.");

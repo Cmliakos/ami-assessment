@@ -1,5 +1,5 @@
 body {
-    background-color: #ffffff;
+  background-color: #ffffff;
 }
 
 .title {
@@ -50,9 +50,9 @@ button {
 }
 
 #clearButton {
-    background-color: #ffffff;
-    border: 1px solid #776e6e;
-    color: #000000;
+  background-color: #ffffff;
+  border: 1px solid #776e6e;
+  color: #000000;
 }
 
 #resultsTitle {
