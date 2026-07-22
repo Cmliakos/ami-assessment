@@ -1,10 +1,25 @@
 import { useState } from 'react';
 import './App.css'
+import cloudy from './assets/cloudy.jpg';
+import sunny from './assets/sunny.jpg';
+import partlyCloudy from './assets/partlyCloudy.jpg';
 
 function App() {
   const [weather, setWeather] = useState(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  let background = null;
+
+  if (weather) {
+    if (weather.cloudCoverage < 0.3) {
+      background = sunny;
+    } else if (weather.cloudCoverage < 0.7) {
+      background = partlyCloudy;
+    } else {
+      background = cloudy;
+    }
+  }
 
   async function fetchMessage(event) {
     event.preventDefault();
@@ -109,7 +124,9 @@ function App() {
 
         <h2 id="resultsTitle" className="title">Results</h2>
 
-        <div className="results">
+        <div className="results"
+          style={{ backgroundImage: `url(${background})` }}
+        >
 
           {loading ? (
             <div className="loading">
@@ -117,27 +134,27 @@ function App() {
               <p>Loading weather data...</p>
             </div>
           ) :
-          weather ? (
-            <>
-              <h3>{weather.city}, {weather.state}, {weather.zip}</h3>
+            weather ? (
+              <>
+                <h3>{weather.city}, {weather.state}, {weather.zip}</h3>
 
-              <p>Temperature: {weather.temperature}°F</p>
+                <p>Temperature: {weather.temperature}°F</p>
 
-              <p>Cloud Coverage: {Math.round(weather.cloudCoverage * 100)}%</p>
+                <p>Cloud Coverage: {Math.round(weather.cloudCoverage * 100)}%</p>
 
-              <p>Wind: {weather.windSpeed} mph at {weather.windDirection}°</p>
+                <p>Wind: {weather.windSpeed} mph at {weather.windDirection}°</p>
 
-              <p>12-Month Average High: {weather.averageHigh}°F</p>
+                <p>12-Month Average High: {weather.averageHigh}°F</p>
 
-            </>
-          ) : error ? (
-            <p className="error">Error: {error}</p>
-          ) : (
-            <>
-              <h3 id="noData">No data yet.</h3>
-              <p>Weather data will be displayed here after you submit a location.</p>
-            </>
-          )}
+              </>
+            ) : error ? (
+              <p className="error">Error: {error}</p>
+            ) : (
+              <>
+                <h3 id="noData">No data yet.</h3>
+                <p>Weather data will be displayed here after you submit a location.</p>
+              </>
+            )}
         </div>
       </center>
     </>
