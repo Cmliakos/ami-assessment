@@ -4,6 +4,7 @@ import './App.css'
 function App() {
   const [weather, setWeather] = useState(null);
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   async function fetchMessage(event) {
     event.preventDefault();
@@ -13,6 +14,8 @@ function App() {
     const zip = document.getElementById('zip').value.trim();
 
     try {
+      setLoading(true);
+      setWeather(null);
       setError('');
       const response = await fetch('/api/weather', {
         method: 'POST',
@@ -37,6 +40,8 @@ function App() {
       console.error('Error fetching weather data:', error);
       setWeather(null);
       setError(error.message);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -92,9 +97,11 @@ function App() {
           <br />
 
           <div>
-            <button type="submit">Submit</button>
+            <button type="submit" disabled={loading} id="submitButton">
+              {loading ? 'Loading...' : 'Submit'}
+            </button>
 
-            <button type="button" id="clearButton" onClick={clearResults}>
+            <button type="button" id="clearButton" onClick={clearResults} disabled={loading}>
               Clear
             </button>
           </div>
@@ -104,7 +111,13 @@ function App() {
 
         <div className="results">
 
-          {weather ? (
+          {loading ? (
+            <div className="loading">
+              <div className="spinner">☀️</div>
+              <p>Loading weather data...</p>
+            </div>
+          ) :
+          weather ? (
             <>
               <h3>{weather.city}, {weather.state}, {weather.zip}</h3>
 
