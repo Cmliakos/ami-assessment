@@ -5,10 +5,12 @@ import sunny from './assets/sunny.jpg';
 import partlyCloudy from './assets/partlyCloudy.jpg';
 
 function App() {
+  // Store the returned weather data, error message, and loading state
   const [weather, setWeather] = useState(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
+  // Select background image based on returned cloud coverage
   let background = null;
 
   if (weather) {
@@ -21,6 +23,7 @@ function App() {
     }
   }
 
+  // Validate the form inputs, submit location to the server, and store the response for display
   async function fetchMessage(event) {
     event.preventDefault();
 
@@ -29,6 +32,7 @@ function App() {
     const zip = document.getElementById('zip').value.trim();
 
     try {
+      // Reset the previous state before making the request
       setLoading(true);
       setWeather(null);
       setError('');
@@ -43,10 +47,13 @@ function App() {
         throw new Error(`Unable to retrieve weather data.`);
       }
       const data = await response.json();
+
+      // Confirm that the response contains the expected data structure
       if (!data.current || !data.current[0]) {
         throw new Error('No weather data was returned');
       }
 
+      // Add calculated average high to the current weather object for display
       const returnedWeather = data.current[0];
       returnedWeather.averageHigh = data.averageHigh;
 
@@ -56,10 +63,12 @@ function App() {
       setWeather(null);
       setError(error.message);
     } finally {
+      // Stop loading spinner and enable the submit button
       setLoading(false);
     }
   }
 
+  // Reset the form inputs and clear the displayed results or error message
   function clearResults() {
     const stateInput = document.getElementById('state');
     const cityInput = document.getElementById('city');
@@ -77,6 +86,7 @@ function App() {
         <h1 className="title">AMI Assessment</h1>
         <p id="subtitle">Enter a location to get current and historical weather data.</p>
 
+        {/* Location input form */}
         <form onSubmit={fetchMessage}>
           <label>City</label>
           <input
@@ -124,8 +134,9 @@ function App() {
 
         <h2 id="resultsTitle" className="title">Results</h2>
 
+        {/* Display loading state, weather results, error message, or no data message */}
         <div className="results"
-          style={{ backgroundImage: `url(${background})` }}
+          style={{ backgroundImage: background ? `url(${background})` : 'none' }}
         >
 
           {loading ? (
