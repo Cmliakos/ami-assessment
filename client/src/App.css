@@ -100,10 +100,17 @@ button {
   animation: spin 1s linear infinite;
 }
 
+.error {
+  margin-top: 60px;
+  font-size: 1.2em;
+  color: #FF0000;
+}
+
 @keyframes spin {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
